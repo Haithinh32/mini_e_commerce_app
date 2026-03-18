@@ -4,7 +4,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 import '../services/api_service.dart';
 import '../models/product.dart';
 import '../widgets/product_card.dart';
-
+import 'product_detail_screen.dart';
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
 
@@ -61,7 +61,7 @@ class _HomeScreenState extends State<HomeScreen> {
       _limit = 10;
     }
     setState(() {
-      if (isRefresh) _isLoading = true;
+      if (isRefresh){ _isLoading = true;}
       else _isLoadingMore = true;
     });
 
@@ -342,6 +342,12 @@ class _HomeScreenState extends State<HomeScreen> {
               product: product,
               onTap: () {
                 // Navigate to Product Detail
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => ProductDetailScreen(product: product),
+                  ),
+                );
               },
             );
           },
