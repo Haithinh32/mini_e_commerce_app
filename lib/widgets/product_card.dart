@@ -25,16 +25,20 @@ class ProductCard extends StatelessWidget {
               children: [
                 ClipRRect(
                   borderRadius: const BorderRadius.vertical(top: Radius.circular(8)),
-                  child: CachedNetworkImage(
-                    imageUrl: product.image,
-                    height: 150,
-                    width: double.infinity,
-                    fit: BoxFit.contain,
-                    placeholder: (context, url) => Container(
-                      color: Colors.grey[200],
-                      child: const Center(child: CircularProgressIndicator()),
+                  // --- BỔ SUNG HERO TẠI ĐÂY ---
+                  child: Hero(
+                    tag: product.id.toString(), // Tag này phải khớp với bên Màn hình 2
+                    child: CachedNetworkImage(
+                      imageUrl: product.image,
+                      height: 150,
+                      width: double.infinity,
+                      fit: BoxFit.contain,
+                      placeholder: (context, url) => Container(
+                        color: Colors.grey[200],
+                        child: const Center(child: CircularProgressIndicator()),
+                      ),
+                      errorWidget: (context, url, error) => const Icon(Icons.error),
                     ),
-                    errorWidget: (context, url, error) => const Icon(Icons.error),
                   ),
                 ),
                 Positioned(
@@ -93,8 +97,10 @@ class ProductCard extends StatelessWidget {
                           fontWeight: FontWeight.bold,
                         ),
                       ),
+                      // Lưu ý: Nếu dùng DummyJSON, bạn hãy sửa product.rating.count 
+                      // thành product.rating (vì DummyJSON không có .count)
                       Text(
-                        'Đã bán ${product.rating.count}',
+                        'Đã bán ${product.rating}', 
                         style: const TextStyle(fontSize: 10, color: Colors.grey),
                       ),
                     ],
