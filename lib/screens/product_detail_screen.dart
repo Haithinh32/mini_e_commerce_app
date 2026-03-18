@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:provider/provider.dart';
 import '../models/product.dart';
 import '../main.dart'; // Import để sử dụng CartManager
+import '../services/cart_service.dart';
+import 'cart_screen.dart';
 
 class ProductDetailScreen extends StatefulWidget {
   final Product product;
@@ -122,7 +125,13 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
                     child: ElevatedButton(
                       style: ElevatedButton.styleFrom(backgroundColor: Colors.orange),
                       onPressed: () {
-                        // Gọi CartManager để nảy số Badge
+                        // Thêm vào CartService
+                        context.read<CartService>().addToCart(
+                          widget.product,
+                          quantity,
+                          '$selectedColor-$selectedSize',
+                        );
+                        // Cập nhật badge số lượng
                         CartManager.addToCart(quantity);
                         Navigator.pop(context);
                         ScaffoldMessenger.of(context).showSnackBar(
@@ -253,24 +262,29 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
   }
 
   Widget _buildCartBadge() {
-    return Stack(
-      alignment: Alignment.center,
-      children: [
-        const Icon(Icons.shopping_cart_outlined, color: Colors.black, size: 28),
-        if (CartManager.count > 0)
-          Positioned(
-            right: 0,
-            top: 10,
-            child: Container(
-              padding: const EdgeInsets.all(2),
-              decoration: BoxDecoration(color: Colors.red, borderRadius: BorderRadius.circular(10)),
-              constraints: const BoxConstraints(minWidth: 16, minHeight: 16),
-              child: Text('${CartManager.count}',
-                  style: const TextStyle(color: Colors.white, fontSize: 10, fontWeight: FontWeight.bold),
-                  textAlign: TextAlign.center),
+    return GestureDetector(
+      onTap: () {
+        Navigator.push(context, MaterialPageRoute(builder: (context) => const CartScreen()));
+      },
+      child: Stack(
+        alignment: Alignment.center,
+        children: [
+          const Icon(Icons.shopping_cart_outlined, color: Colors.black, size: 28),
+          if (CartManager.count > 0)
+            Positioned(
+              right: 0,
+              top: 10,
+              child: Container(
+                padding: const EdgeInsets.all(2),
+                decoration: BoxDecoration(color: Colors.red, borderRadius: BorderRadius.circular(10)),
+                constraints: const BoxConstraints(minWidth: 16, minHeight: 16),
+                child: Text('${CartManager.count}',
+                    style: const TextStyle(color: Colors.white, fontSize: 10, fontWeight: FontWeight.bold),
+                    textAlign: TextAlign.center),
+              ),
             ),
-          ),
-      ],
+        ],
+      ),
     );
   }
 
@@ -281,9 +295,16 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
       child: SafeArea(
         child: Row(
           children: [
-            const Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [Icon(Icons.chat_bubble_outline, color: Colors.orange), Text("Chat ngay", style: TextStyle(fontSize: 10))],
+            GestureDetector(
+              onTap: () {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(content: Text("Tính năng chat sắp ra mắt!")),
+                );
+              },
+              child: const Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [Icon(Icons.chat_bubble_outline, color: Colors.orange), Text("Chat ngay", style: TextStyle(fontSize: 10))],
+              ),
             ),
             const SizedBox(width: 20),
             Expanded(
