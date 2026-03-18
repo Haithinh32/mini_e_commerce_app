@@ -21,3 +21,11 @@ class MyApp extends StatelessWidget {
     );
   }
 }
+
+// Class hỗ trợ đếm số lượng giỏ hàng toàn cục
+class CartManager {
+  static int count = 0;
+  static void addToCart(int quantity) {
+    count += quantity;
+  }
+}
