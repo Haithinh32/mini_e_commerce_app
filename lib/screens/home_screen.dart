@@ -6,6 +6,8 @@ import '../models/product.dart';
 import '../widgets/product_card.dart';
 import 'cart_screen.dart';
 import 'product_detail_screen.dart';
+import 'purchase_screen.dart';
+
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
 
@@ -25,9 +27,9 @@ class _HomeScreenState extends State<HomeScreen> {
   String _searchQuery = '';
 
   final List<String> _banners = [
-    'https://img.freepik.com/free-vector/horizontal-sale-banner-template_23-2148897328.jpg',
-    'https://img.freepik.com/free-vector/flat-style-shopping-sale-background_23-2147753234.jpg',
-    'https://img.freepik.com/free-vector/shopping-center-promotion-banner_23-2148334469.jpg',
+    'https://placehold.co/600x400/EEE/31343C',
+    'https://placehold.co/600x400/EEE/31343C',
+    'https://placehold.co/600x400/EEE/31343C',
   ];
 
   final List<Map<String, dynamic>> _categories = [
@@ -62,21 +64,25 @@ class _HomeScreenState extends State<HomeScreen> {
       _limit = 10;
     }
     setState(() {
-      if (isRefresh){ _isLoading = true;}
-      else _isLoadingMore = true;
+      if (isRefresh) {
+        _isLoading = true;
+      } else
+        _isLoadingMore = true;
     });
 
     try {
-      final products = await ApiService.getProducts(limit: isRefresh ? 10 : _limit);
+      final products = await ApiService.getProducts(
+        limit: isRefresh ? 10 : _limit,
+      );
       setState(() {
         _allProducts = products;
         _applySearch();
       });
     } catch (e) {
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Error: $e')),
-        );
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text('Error: $e')));
       }
     } finally {
       if (mounted) {
@@ -93,7 +99,9 @@ class _HomeScreenState extends State<HomeScreen> {
       _filteredProducts = _allProducts;
     } else {
       _filteredProducts = _allProducts
-          .where((p) => p.title.toLowerCase().contains(_searchQuery.toLowerCase()))
+          .where(
+            (p) => p.title.toLowerCase().contains(_searchQuery.toLowerCase()),
+          )
           .toList();
     }
   }
@@ -106,8 +114,10 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   void _onScroll() {
-    if (_scrollController.position.pixels >= _scrollController.position.maxScrollExtent - 200 &&
-        !_isLoadingMore && _searchQuery.isEmpty) {
+    if (_scrollController.position.pixels >=
+            _scrollController.position.maxScrollExtent - 200 &&
+        !_isLoadingMore &&
+        _searchQuery.isEmpty) {
       _limit += 10;
       _fetchProducts();
     }
@@ -134,8 +144,14 @@ class _HomeScreenState extends State<HomeScreen> {
                     Container(width: 4, height: 20, color: Colors.orange),
                     const SizedBox(width: 8),
                     Text(
-                      _searchQuery.isEmpty ? 'GỢI Ý HÔM NAY' : 'KẾT QUẢ TÌM KIẾM',
-                      style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16, color: Colors.orange),
+                      _searchQuery.isEmpty
+                          ? 'GỢI Ý HÔM NAY'
+                          : 'KẾT QUẢ TÌM KIẾM',
+                      style: const TextStyle(
+                        fontWeight: FontWeight.bold,
+                        fontSize: 16,
+                        color: Colors.orange,
+                      ),
                     ),
                   ],
                 ),
@@ -192,7 +208,10 @@ class _HomeScreenState extends State<HomeScreen> {
                         style: const TextStyle(fontSize: 12),
                         decoration: const InputDecoration(
                           hintText: 'Tìm kiếm trên Mini Shop',
-                          hintStyle: TextStyle(color: Colors.grey, fontSize: 12),
+                          hintStyle: TextStyle(
+                            color: Colors.grey,
+                            fontSize: 12,
+                          ),
                           border: InputBorder.none,
                           isDense: true,
                           contentPadding: EdgeInsets.zero,
@@ -205,7 +224,11 @@ class _HomeScreenState extends State<HomeScreen> {
                           _searchController.clear();
                           _onSearchChanged('');
                         },
-                        child: const Icon(Icons.close, size: 18, color: Colors.grey),
+                        child: const Icon(
+                          Icons.close,
+                          size: 18,
+                          color: Colors.grey,
+                        ),
                       ),
                   ],
                 ),
@@ -216,19 +239,30 @@ class _HomeScreenState extends State<HomeScreen> {
       ),
       title: const Text(
         'TH4 - Nhóm G15_C3',
-        style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: Colors.white),
+        style: TextStyle(
+          fontSize: 16,
+          fontWeight: FontWeight.bold,
+          color: Colors.white,
+        ),
       ),
       actions: [
+        IconButton(
+          icon: const Icon(Icons.assignment, color: Colors.white),
+          onPressed: () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) => const PurchaseScreen()),
+            );
+          },
+        ),
         IconButton(
           icon: const Icon(Icons.shopping_cart, color: Colors.white),
           onPressed: () {
             // Navigate to Cart
             Navigator.push(
-      context,
-      MaterialPageRoute(
-        builder: (context) => CartScreen(),
-      ),
-    );
+              context,
+              MaterialPageRoute(builder: (context) => CartScreen()),
+            );
           },
         ),
       ],
@@ -253,10 +287,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 return Container(
                   width: MediaQuery.of(context).size.width,
                   margin: const EdgeInsets.symmetric(horizontal: 0),
-                  child: CachedNetworkImage(
-                    imageUrl: url,
-                    fit: BoxFit.cover,
-                  ),
+                  child: CachedNetworkImage(imageUrl: url, fit: BoxFit.cover),
                 );
               },
             );
@@ -268,13 +299,19 @@ class _HomeScreenState extends State<HomeScreen> {
             return Container(
               width: 8.0,
               height: 8.0,
-              margin: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 4.0),
+              margin: const EdgeInsets.symmetric(
+                vertical: 8.0,
+                horizontal: 4.0,
+              ),
               decoration: BoxDecoration(
                 shape: BoxShape.circle,
-                color: (Theme.of(context).brightness == Brightness.dark
-                        ? Colors.white
-                        : Colors.orange)
-                    .withOpacity(_currentBannerIndex == entry.key ? 0.9 : 0.4),
+                color:
+                    (Theme.of(context).brightness == Brightness.dark
+                            ? Colors.white
+                            : Colors.orange)
+                        .withOpacity(
+                          _currentBannerIndex == entry.key ? 0.9 : 0.4,
+                        ),
               ),
             );
           }).toList(),
@@ -342,24 +379,21 @@ class _HomeScreenState extends State<HomeScreen> {
           crossAxisSpacing: 8,
           childAspectRatio: 0.7,
         ),
-        delegate: SliverChildBuilderDelegate(
-          (context, index) {
-            final product = _filteredProducts[index];
-            return ProductCard(
-              product: product,
-              onTap: () {
-                // Navigate to Product Detail
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => ProductDetailScreen(product: product),
-                  ),
-                );
-              },
-            );
-          },
-          childCount: _filteredProducts.length,
-        ),
+        delegate: SliverChildBuilderDelegate((context, index) {
+          final product = _filteredProducts[index];
+          return ProductCard(
+            product: product,
+            onTap: () {
+              // Navigate to Product Detail
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => ProductDetailScreen(product: product),
+                ),
+              );
+            },
+          );
+        }, childCount: _filteredProducts.length),
       ),
     );
   }
