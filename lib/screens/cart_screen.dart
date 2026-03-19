@@ -3,6 +3,7 @@ import 'package:provider/provider.dart';
 import 'package:intl/intl.dart';
 import '../models/cart_item.dart';
 import '../services/cart_service.dart';
+import 'purchase_screen.dart';
 
 class CartScreen extends StatefulWidget {
   const CartScreen({Key? key}) : super(key: key);
@@ -15,7 +16,6 @@ class _CartScreenState extends State<CartScreen> {
   bool selectAll = false;
   final currencyFormat = NumberFormat.currency(locale: 'en_US', symbol: '\$');
 
-  // Tính tổng tiền (chỉ các sản phẩm được tick)
   double getTotalPrice(List<CartItem> cartItems) {
     return cartItems.fold(0, (sum, item) {
       if (item.isSelected) {
@@ -25,12 +25,10 @@ class _CartScreenState extends State<CartScreen> {
     });
   }
 
-  // Đếm số sản phẩm được tick
   int getSelectedCount(List<CartItem> cartItems) {
     return cartItems.where((item) => item.isSelected).length;
   }
 
-  // Cập nhật trạng thái "Chọn tất cả"
   void updateSelectAllStatus(List<CartItem> cartItems) {
     setState(() {
       selectAll =
@@ -38,7 +36,6 @@ class _CartScreenState extends State<CartScreen> {
     });
   }
 
-  // Chọn/bỏ chọn tất cả
   void toggleSelectAll(List<CartItem> cartItems, bool value) {
     setState(() {
       selectAll = value;
@@ -48,7 +45,6 @@ class _CartScreenState extends State<CartScreen> {
     });
   }
 
-  // Toggle chọn một sản phẩm
   void toggleItemSelection(List<CartItem> cartItems, int index) {
     setState(() {
       cartItems[index].isSelected = !cartItems[index].isSelected;
@@ -56,12 +52,10 @@ class _CartScreenState extends State<CartScreen> {
     });
   }
 
-  // Tăng số lượng
   void increaseQuantity(BuildContext context, List<CartItem> cartItems, int index) {
     context.read<CartService>().updateQuantity(index, cartItems[index].quantity + 1);
   }
 
-  // Giảm số lượng
   void decreaseQuantity(BuildContext context, List<CartItem> cartItems, int index) {
     if (cartItems[index].quantity <= 1) {
       showDeleteDialog(context, cartItems, index);
@@ -70,7 +64,6 @@ class _CartScreenState extends State<CartScreen> {
     }
   }
 
-  // Dialog xác nhận xóa
   void showDeleteDialog(BuildContext context, List<CartItem> cartItems, int index) {
     showDialog(
       context: context,
@@ -97,7 +90,6 @@ class _CartScreenState extends State<CartScreen> {
     );
   }
 
-  // Xóa bằng Dismissible
   void dismissItem(BuildContext context, List<CartItem> cartItems, int index) {
     final removedItem = cartItems[index];
     final cartService = context.read<CartService>();
@@ -264,13 +256,11 @@ class _CartScreenState extends State<CartScreen> {
                                 child: ElevatedButton(
                                   onPressed: getSelectedCount(cartItems) > 0
                                       ? () {
-                                          ScaffoldMessenger.of(
+                                          final selectedItems = cartItems.where((item) => item.isSelected).toList();
+                                          Navigator.push(
                                             context,
-                                          ).showSnackBar(
-                                            SnackBar(
-                                              content: Text(
-                                                'Thanh toán ${getSelectedCount(cartItems)} sản phẩm - ${currencyFormat.format(getTotalPrice(cartItems))}',
-                                              ),
+                                            MaterialPageRoute(
+                                              builder: (context) => PurchaseScreen(selectedItems: selectedItems),
                                             ),
                                           );
                                         }
